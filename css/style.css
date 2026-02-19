@@ -31,6 +31,15 @@ header button {
     margin: 30px auto;
 }
 
+.search-bar {
+    margin-bottom: 20px;
+}
+
+.search-bar input {
+    width: 300px;
+    padding: 8px;
+}
+
 .form-container {
     background: white;
     padding: 20px;
@@ -48,6 +57,11 @@ header button {
 .form-row input {
     padding: 8px;
     margin-top: 5px;
+}
+
+.error {
+    color: red;
+    font-size: 12px;
 }
 
 .button-group {

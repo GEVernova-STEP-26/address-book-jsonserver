@@ -13,6 +13,13 @@
       "email": "saachirastogi@gmail.com",
       "address": "Greater Noida, New Delhi",
       "id": 2
+    },
+    {
+      "name": "Sree Ram",
+      "phone": "8742956390",
+      "email": "sram13@gmail.com",
+      "address": "Kurnool, Andhra Pradesh",
+      "id": 3
     }
   ]
 }

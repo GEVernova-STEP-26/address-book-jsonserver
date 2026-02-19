@@ -1,11 +1,15 @@
 const BASE_URL = "http://localhost:3000/contacts";
+let allContacts = [];
 
 document.addEventListener("DOMContentLoaded", fetchContacts);
 
 function fetchContacts() {
     fetch(BASE_URL)
         .then(res => res.json())
-        .then(data => renderContacts(data));
+        .then(data => {
+            allContacts = data;
+            renderContacts(data);
+        });
 }
 
 function renderContacts(contacts) {
@@ -34,12 +38,52 @@ function renderContacts(contacts) {
     });
 }
 
+/* SEARCH FUNCTION */
+function filterContacts() {
+    const searchValue = document.getElementById("searchInput").value.toLowerCase();
+    const filtered = allContacts.filter(contact =>
+        contact.name.toLowerCase().includes(searchValue)
+    );
+    renderContacts(filtered);
+}
+
+/* VALIDATION */
+function validateForm(name, phone, email, address) {
+    let isValid = true;
+
+    document.querySelectorAll(".error").forEach(e => e.innerText = "");
+
+    if (!name) {
+        document.getElementById("nameError").innerText = "Name is required";
+        isValid = false;
+    }
+
+    if (!/^[0-9]{10}$/.test(phone)) {
+        document.getElementById("phoneError").innerText = "Phone must be 10 digits";
+        isValid = false;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+        document.getElementById("emailError").innerText = "Invalid email format";
+        isValid = false;
+    }
+
+    if (!address) {
+        document.getElementById("addressError").innerText = "Address is required";
+        isValid = false;
+    }
+
+    return isValid;
+}
+
 function saveContact() {
     const id = document.getElementById("contactId").value;
-    const name = document.getElementById("name").value;
-    const phone = document.getElementById("phone").value;
-    const email = document.getElementById("email").value;
-    const address = document.getElementById("address").value;
+    const name = document.getElementById("name").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const address = document.getElementById("address").value.trim();
+
+    if (!validateForm(name, phone, email, address)) return;
 
     const contact = { name, phone, email, address };
 
@@ -49,9 +93,8 @@ function saveContact() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(contact)
         }).then(() => {
-            resetForm();
-            hideForm();
             fetchContacts();
+            hideForm();
         });
     } else {
         fetch(BASE_URL, {
@@ -59,9 +102,8 @@ function saveContact() {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(contact)
         }).then(() => {
-            resetForm();
-            hideForm();
             fetchContacts();
+            hideForm();
         });
     }
 }
