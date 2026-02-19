@@ -1,5 +1,6 @@
 const BASE_URL = "http://localhost:3000/contacts";
 let allContacts = [];
+let sortOrder = "asc";
 
 document.addEventListener("DOMContentLoaded", fetchContacts);
 
@@ -8,72 +9,84 @@ function fetchContacts() {
         .then(res => res.json())
         .then(data => {
             allContacts = data;
-            renderContacts(data);
+            applySort();
+            updateCount();
         });
+}
+
+function updateCount() {
+    document.getElementById("contactCount").innerText =
+        `${allContacts.length} Contact(s)`;
 }
 
 function renderContacts(contacts) {
     const list = document.getElementById("contactList");
     list.innerHTML = "";
 
-    contacts.forEach(contact => {
+    contacts.forEach(c => {
+        const initial = c.name.charAt(0).toUpperCase();
+
         list.innerHTML += `
-            <tr>
-                <td>${contact.name}</td>
-                <td>${contact.phone}</td>
-                <td>${contact.email}</td>
-                <td>${contact.address}</td>
-                <td>
+            <div class="contact-card">
+                <div class="avatar">${initial}</div>
+                <h3>${c.name}</h3>
+                <p>📞 ${c.phone}</p>
+                <p>✉️ ${c.email}</p>
+                <p>📍 ${c.address}</p>
+                <div class="card-actions">
                     <button class="action-btn edit-btn"
-                        onclick="editContact(${contact.id}, '${contact.name}', '${contact.phone}', '${contact.email}', '${contact.address}')">
+                        onclick="editContact(${c.id}, '${c.name}', '${c.phone}', '${c.email}', '${c.address}')">
                         Edit
                     </button>
                     <button class="action-btn delete-btn"
-                        onclick="deleteContact(${contact.id})">
+                        onclick="deleteContact(${c.id})">
                         Delete
                     </button>
-                </td>
-            </tr>
+                </div>
+            </div>
         `;
     });
 }
 
-/* SEARCH FUNCTION */
-function filterContacts() {
-    const searchValue = document.getElementById("searchInput").value.toLowerCase();
-    const filtered = allContacts.filter(contact =>
-        contact.name.toLowerCase().includes(searchValue)
-    );
-    renderContacts(filtered);
+function toggleSort() {
+    sortOrder = sortOrder === "asc" ? "desc" : "asc";
+    document.getElementById("sortLabel").innerText =
+        sortOrder === "asc" ? "A–Z" : "Z–A";
+    applySort();
 }
 
-/* VALIDATION */
-function validateForm(name, phone, email, address) {
-    let isValid = true;
+function applySort() {
+    const sorted = [...allContacts].sort((a, b) =>
+        sortOrder === "asc"
+            ? a.name.localeCompare(b.name)
+            : b.name.localeCompare(a.name)
+    );
+    renderContacts(sorted);
+}
 
-    document.querySelectorAll(".error").forEach(e => e.innerText = "");
+function filterContacts() {
+    const value = document.getElementById("searchInput").value.toLowerCase();
 
-    if (!name) {
-        document.getElementById("nameError").innerText = "Name is required";
-        isValid = false;
-    }
+    const filtered = allContacts.filter(c =>
+        c.name.toLowerCase().includes(value)
+    );
 
-    if (!/^[0-9]{10}$/.test(phone)) {
-        document.getElementById("phoneError").innerText = "Phone must be 10 digits";
-        isValid = false;
-    }
+    const sorted = filtered.sort((a, b) =>
+        sortOrder === "asc"
+            ? a.name.localeCompare(b.name)
+            : b.name.localeCompare(a.name)
+    );
 
-    if (!/^\S+@\S+\.\S+$/.test(email)) {
-        document.getElementById("emailError").innerText = "Invalid email format";
-        isValid = false;
-    }
+    renderContacts(sorted);
+}
 
-    if (!address) {
-        document.getElementById("addressError").innerText = "Address is required";
-        isValid = false;
-    }
+function openModal() {
+    document.getElementById("contactModal").style.display = "flex";
+}
 
-    return isValid;
+function closeModal() {
+    document.getElementById("contactModal").style.display = "none";
+    resetForm();
 }
 
 function saveContact() {
@@ -83,29 +96,24 @@ function saveContact() {
     const email = document.getElementById("email").value.trim();
     const address = document.getElementById("address").value.trim();
 
-    if (!validateForm(name, phone, email, address)) return;
+    if (!name || !phone || !email || !address) {
+        showToast("All fields are required");
+        return;
+    }
 
     const contact = { name, phone, email, address };
+    const method = id ? "PUT" : "POST";
+    const url = id ? `${BASE_URL}/${id}` : BASE_URL;
 
-    if (id) {
-        fetch(`${BASE_URL}/${id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(contact)
-        }).then(() => {
-            fetchContacts();
-            hideForm();
-        });
-    } else {
-        fetch(BASE_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(contact)
-        }).then(() => {
-            fetchContacts();
-            hideForm();
-        });
-    }
+    fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contact)
+    }).then(() => {
+        fetchContacts();
+        closeModal();
+        showToast("Contact saved successfully");
+    });
 }
 
 function editContact(id, name, phone, email, address) {
@@ -114,28 +122,27 @@ function editContact(id, name, phone, email, address) {
     document.getElementById("phone").value = phone;
     document.getElementById("email").value = email;
     document.getElementById("address").value = address;
-    showForm();
+    openModal();
 }
 
 function deleteContact(id) {
-    fetch(`${BASE_URL}/${id}`, {
-        method: "DELETE"
-    }).then(() => fetchContacts());
+    if (confirm("Delete this contact?")) {
+        fetch(`${BASE_URL}/${id}`, { method: "DELETE" })
+            .then(() => {
+                fetchContacts();
+                showToast("Contact deleted");
+            });
+    }
 }
 
-function showForm() {
-    document.getElementById("formSection").style.display = "block";
-}
-
-function hideForm() {
-    document.getElementById("formSection").style.display = "none";
-    resetForm();
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.innerText = message;
+    toast.style.display = "block";
+    setTimeout(() => toast.style.display = "none", 2000);
 }
 
 function resetForm() {
     document.getElementById("contactId").value = "";
-    document.getElementById("name").value = "";
-    document.getElementById("phone").value = "";
-    document.getElementById("email").value = "";
-    document.getElementById("address").value = "";
+    document.querySelectorAll(".modal-content input").forEach(i => i.value = "");
 }
