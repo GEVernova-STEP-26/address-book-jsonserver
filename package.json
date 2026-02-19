@@ -1,0 +1,14 @@
+{
+  "name": "address-book-json",
+  "version": "1.0.0",
+  "description": "Address Book using JSON Server",
+  "main": "index.js",
+  "scripts": {
+    "start": "json-server --watch db.json --port 3000"
+  },
+  "author": "Hrudaya",
+  "license": "ISC",
+  "dependencies": {
+    "json-server": "^0.17.4"
+  }
+}
