@@ -1,0 +1,53 @@
+{
+  "contacts": [
+    {
+      "name": "Hrudaya",
+      "phone": "7207888590",
+      "email": "ghrudaya@gmail.com",
+      "address": "Plot no:35, D no:7-158, first floor, kakatiya terrain",
+      "id": 1
+    },
+    {
+      "name": "Sacchi",
+      "phone": "9728528502",
+      "email": "saachirastogi@gmail.com",
+      "address": "Greater Noida, New Delhi",
+      "id": 2
+    },
+    {
+      "name": "Sree Ram",
+      "phone": "8742956390",
+      "email": "sram13@gmail.com",
+      "address": "Kurnool, Andhra Pradesh",
+      "id": 3
+    },
+    {
+      "name": "Risha",
+      "phone": "9835625555",
+      "email": "rishap@gmail.com",
+      "address": "Gudivada, Andhra Pradesh",
+      "id": 4
+    },
+    {
+      "name": "Priya",
+      "phone": "9012345678",
+      "email": "priya.reddy@gmail.com",
+      "address": "Chennai",
+      "id": 5
+    },
+    {
+      "name": "Sneha",
+      "phone": "9345678901",
+      "email": "Sneha.patel@gmail.com",
+      "address": "Ahmedabad",
+      "id": 6
+    },
+    {
+      "name": "Karan Mehta",
+      "phone": "9456789012",
+      "email": "karan.mehta@gmail.com",
+      "address": "Pune",
+      "id": 7
+    }
+  ]
+}

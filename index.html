@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Address Book</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+    <div>
+        <h1>Contacts</h1>
+        <p id="contactCount"></p>
+    </div>
+    <button class="primary-btn" onclick="openModal()">+ Add Contact</button>
+</header>
+
+<div class="container">
+
+    <div class="top-bar">
+        <input type="text" id="searchInput" placeholder="Search contacts..." onkeyup="filterContacts()">
+
+        <button class="sort-btn" onclick="toggleSort()">
+            Sort: <span id="sortLabel">A–Z</span>
+        </button>
+    </div>
+
+    <div class="card-grid" id="contactList"></div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="contactModal">
+    <div class="modal-content">
+        <h2>Add / Edit Contact</h2>
+
+        <input type="hidden" id="contactId">
+
+        <input type="text" id="name" placeholder="Full Name">
+        <input type="text" id="phone" placeholder="Phone Number">
+        <input type="email" id="email" placeholder="Email">
+        <input type="text" id="address" placeholder="Address">
+
+        <div class="modal-buttons">
+            <button class="success-btn" onclick="saveContact()">Save</button>
+            <button class="danger-btn" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
