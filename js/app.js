@@ -14,14 +14,22 @@ function renderContacts(contacts) {
 
     contacts.forEach(contact => {
         list.innerHTML += `
-            <div class="contact-card">
-                <h3>${contact.name}</h3>
-                <p><strong>Phone:</strong> ${contact.phone}</p>
-                <p><strong>Email:</strong> ${contact.email}</p>
-                <p><strong>Address:</strong> ${contact.address}</p>
-                <button onclick="editContact(${contact.id}, '${contact.name}', '${contact.phone}', '${contact.email}', '${contact.address}')">Edit</button>
-                <button onclick="deleteContact(${contact.id})">Delete</button>
-            </div>
+            <tr>
+                <td>${contact.name}</td>
+                <td>${contact.phone}</td>
+                <td>${contact.email}</td>
+                <td>${contact.address}</td>
+                <td>
+                    <button class="action-btn edit-btn"
+                        onclick="editContact(${contact.id}, '${contact.name}', '${contact.phone}', '${contact.email}', '${contact.address}')">
+                        Edit
+                    </button>
+                    <button class="action-btn delete-btn"
+                        onclick="deleteContact(${contact.id})">
+                        Delete
+                    </button>
+                </td>
+            </tr>
         `;
     });
 }
@@ -42,6 +50,7 @@ function saveContact() {
             body: JSON.stringify(contact)
         }).then(() => {
             resetForm();
+            hideForm();
             fetchContacts();
         });
     } else {
@@ -51,6 +60,7 @@ function saveContact() {
             body: JSON.stringify(contact)
         }).then(() => {
             resetForm();
+            hideForm();
             fetchContacts();
         });
     }
@@ -62,12 +72,22 @@ function editContact(id, name, phone, email, address) {
     document.getElementById("phone").value = phone;
     document.getElementById("email").value = email;
     document.getElementById("address").value = address;
+    showForm();
 }
 
 function deleteContact(id) {
     fetch(`${BASE_URL}/${id}`, {
         method: "DELETE"
     }).then(() => fetchContacts());
+}
+
+function showForm() {
+    document.getElementById("formSection").style.display = "block";
+}
+
+function hideForm() {
+    document.getElementById("formSection").style.display = "none";
+    resetForm();
 }
 
 function resetForm() {
